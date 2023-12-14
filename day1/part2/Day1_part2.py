@@ -2,7 +2,7 @@
 def main():   
     resultado = 0
     sum = 0
-    file = open("/workspaces/AoC_2023/Day1/Part2/list.txt", "r")
+    file = open("/workspaces/AoC_2023/day1/part2/list.txt", "r")
     
     #fileList = file.readlines()
     replacedFile = []
