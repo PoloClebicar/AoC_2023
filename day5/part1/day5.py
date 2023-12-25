@@ -4,7 +4,7 @@ def main():
     #Set up the Queue 
     fileQ = queue.Queue()
 
-    file = open("/workspaces/AoC_2023/day5/part1/list.txt", "r")
+    file = open("/workspaces/AoC_2023/day5/part1/testList.txt", "r")
 
     for lines in file:
         fileQ.put(lines)
@@ -23,42 +23,35 @@ def main():
         newSeedList = compareList(newSeedList, mapList)
 
     
-    print("Result : " ,newSeedList)
+    print("Result : " ,checkSmallestNumber(newSeedList))
 
+
+def checkSmallestNumber(seedList):
+    res = int(seedList[0])
+    for seeds in seedList:
+        if int(seeds) <= res:
+            res = int(seeds)
+
+    return res
 
 
 def compareList(seedList, mapList):
-    newSeedList = seedList
-    count = 0
+    bufferList = seedList
+    i = -1
+    print(seedList, mapList)
 
-    for list in mapList:
-        #print("Numbers Beeing Processed : " ,list)
-        sum = int(list[1]) - int(list[0])
-        #print("Difference: ", sum)
-        seedCount = 0  
+    for seed in bufferList:
+        i+=1
+        for maps in mapList:
+            if int(maps[1]) <= int(seed) <= int(maps[1]) + int(maps[2]) - 1:                
+                bufferList[i] = int(maps[0]) - int(maps[1]) + int(seed)
+    
+    seedList = bufferList
+    #print(seedList)
+    return seedList
+
+
         
-        for seed in seedList:
-                      
-            count = 0
-            foundMatch = False
-            #print("Current Seed: " , seed)
-            for _ in range(int(list[2])):
-                if int(seed) == int(list[1]) + count:
-                    print("This: " ,int(list[1]) + count, "Into : ",(int(list[1]) + count - sum))
-                    newSeedList[seedCount] = (int(list[1]) + count - sum)
-                    print("New Seed : " ,int(list[1]) + count - sum)               
-                    break
-                count+=1
-        
-            seedCount+=1
-
-            
-    print("New Seed List : " , newSeedList)
-    return newSeedList.copy()
-
-
-
-
 def treatCoordinates(rawCoord):
     lineBuffer =[]
     treatedCoordinates = []
