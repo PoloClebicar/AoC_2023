@@ -4,7 +4,7 @@ def main():
     #Set up the Queue 
     fileQ = queue.Queue()
 
-    file = open("/workspaces/AoC_2023/day5/part1/testList.txt", "r")
+    file = open("/mnt/c/users/thepo/Documents/GitHub/AoC_2023/Aoc_2023/day5/part2/list.txt", "r")
 
     for lines in file:
         fileQ.put(lines)
@@ -36,20 +36,48 @@ def checkSmallestNumber(seedList):
 
 
 def compareList(seedList, mapList):
-    bufferList = seedList
-    i = -1
-    print(seedList, mapList)
+    bufferList = []
+    newSeedList = []
+    for i in range(int((len(seedList)/2))):
+       bufferList.append(seedList[i * 2])
+       bufferList.append(seedList[(i * 2) + 1])
+       print(bufferList)
 
-    for seed in bufferList:
-        i+=1
-        for maps in mapList:
-            if int(maps[1]) <= int(seed) <= int(maps[1]) + int(maps[2]) - 1:                
-                bufferList[i] = int(maps[0]) - int(maps[1]) + int(seed)
+
+       #if Seedlist Start in within range of map list, and if SeedList end is withing range also
+       for maps in mapList:
+           
+
+           '''
+           Figure out hwo to create a new list with the correct ranges #TODO
+           '''
+           #Check if seedrange start is within maprange
+           if int(maps[1]) <= int(bufferList[0]) <= int(maps[1]) + int(maps[2]):
+                #Check if the end of the range is within maprange
+                if int(maps[1]) <= int(bufferList[0]) + int(bufferList[1]) <= int(maps[1]) + int(maps[2]):
+                    print("Seed withing Range", maps)
+                else:
+                    print("Only Start of Seed within range", maps)
+
+           else:
+               print("Seeds Not in range",maps)
+
+          #Check it the range is within seed 
+           if int(bufferList[0]) <= int(maps[1]) <= int(bufferList[0]) + int(bufferList[1]):
+                #Check if the end of the maprange is within seedrange
+                if int(bufferList[0]) <= int(map[1]) + int(maps[2]) <= int(bufferList[0]) + int(bufferList[1]):
+                    print("Map withing SeedRange", maps)
+                else:
+                    print("Only Start of Map within range", maps)
+
+           else:
+               print("Map Not in range",maps)
+
+
+       bufferList.clear()
+
     
-    seedList = bufferList
-    #print(seedList)
-    return seedList
-
+    print(mapList) 
 
         
 def treatCoordinates(rawCoord):
@@ -84,7 +112,6 @@ def createSeedList(fileQ):
     seedList = fileQ.get()
     seedList = seedList.split(":")[1]
     seedList = seedList.strip().split(" ")
-    
     return seedList
 
 
