@@ -61,33 +61,38 @@ def compareList(seedList, mapList):
 
             if mapRangeStart <= seedRangeStart <= mapRangeEnd and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
                 #Seed fully inside map range
-                #Cover both Start and End of Seed Range converted
+                #both Start and End of Seed Range converted
                 #We remove the Seed Range start from the end to create a Range, and not a end position
-                bufferList = [seedRangeStart + mapKey,(seedRangeEnd + mapKey) - seedRangeStart]
+                bufferlist = [seedRangeStart + mapKey, seedRangeEnd + mapKey - seedRangeStart]
                 
             elif seedRangeStart <= mapRangeStart <= seedRangeEnd and seedRangeStart <= mapRangeEnd <= seedRangeEnd:
                 #Map range fully withing Seeds
                 #Create a list with SeedStart -> MapStart -1, 
                 #another range from MapStart -> MapEnd, 
                 #another from Mapend + 1 -> Seed End
-                bufferList = [seedRangeStart, ((mapRangeStart - 1) - seedRangeStart),
-                              (mapRangeStart + mapKey), (mapRangeEnd + mapKey),
-                              (mapRangeEnd + 1), (seedRangeEnd)]
-            elif mapRangeStart <= seedRangeStart <= mapRangeEnd and not (mapRangeStart <= seedRangeStart <= mapRangeEnd):
+                bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
+                              mapRangeStart + mapKey, mapRangeEnd + mapKey - mapRangeStart,
+                              mapRangeEnd + 1, seedRangeEnd - seedRangeStart] 
+                
+            elif mapRangeStart <= seedRangeStart <= mapRangeEnd and not (mapRangeStart <= seedRangeEnd <= mapRangeEnd):
                 #Seed start within but seed end out
-                #Create a range with Start converted -> Maprange end, maprangend +1 -> normal Seed end 
-                bufferList = [(seedRangeStart + mapKey), (mapRangeEnd - seedRangeStart),
-                              (mapRangeEnd + 1), (seedRangeEnd)]
-            elif not(mapRangeStart <= seedRangeStart <= mapRangeEnd) and mapRangeStart <= seedRangeStart <= mapRangeEnd:
+                #Create a range with Start converted -> Maprange end,
+                # maprangend +1 -> normal Seed end 
+                bufferList = [seedRangeStart + mapKey, mapRangeEnd + mapKey - seedRangeStart,
+                              mapRangeEnd + 1, seedRangeEnd - seedRangeStart]
+                
+            elif not(mapRangeStart <= seedRangeStart <= mapRangeEnd) and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
                 #Seed start out but seed end within
-                #Create a range SeedStartNormal -> SeedStart -1,
-                #SeedStart Converted ->imapRangeEndCoverted,
-                bufferList = [(seedRangeStart), (mapRangeStart - 1),
-                              (mapRangeStart + mapKey),(seedRangeEnd + mapKey - seedRangeStart)]
+                #Create a range SeedStartNormal -> mapstart -1,
+                #mapstart Converted -> RangeEndCoverted,
+                bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
+                              mapRangeStart + mapKey, seedRangeEnd + mapKey -seedRangeStart]
+                
             else:
                 #The ranges do not overlap
                 bufferList = [(seedRangeStart), (seedRangeEnd - seedRangeStart)]
 
+        print("Itens addes: ", bufferList)
         for itens in bufferList:
             newSeedList.append(itens)
 
