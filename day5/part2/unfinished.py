@@ -28,9 +28,10 @@ def main():
 
 def checkSmallestNumber(seedList):
     res = int(seedList[0])
-    for seeds in seedList:
-        if int(seeds) <= res:
-            res = int(seeds)
+    for i in range(int(len(seedList)/2)):
+        if seedList[i * 2] <= res:
+            res = seedList[i * 2]
+    
 
     return res
 
@@ -55,7 +56,7 @@ def compareList(seedList, mapList):
             #Naming the variables for map
             mapRangeStart = int(mapLists[1])
             mapRangeEnd = int(mapLists[1]) + int(mapLists[2])
-            mapKey = int(mapLists[1]) - int(mapLists[0])
+            mapKey = int(mapLists[0]) - int(mapLists[1])
 
             #Check if the seeds and maps intersect
 
@@ -63,7 +64,9 @@ def compareList(seedList, mapList):
                 #Seed fully inside map range
                 #both Start and End of Seed Range converted
                 #We remove the Seed Range start from the end to create a Range, and not a end position
-                bufferlist = [seedRangeStart + mapKey, seedRangeEnd + mapKey - seedRangeStart]
+                bufferList = [seedRangeStart + mapKey, seedRangeEnd - seedRangeStart]
+                print("Case 1", bufferList)
+                break
                 
             elif seedRangeStart <= mapRangeStart <= seedRangeEnd and seedRangeStart <= mapRangeEnd <= seedRangeEnd:
                 #Map range fully withing Seeds
@@ -73,24 +76,30 @@ def compareList(seedList, mapList):
                 bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
                               mapRangeStart + mapKey, mapRangeEnd + mapKey - mapRangeStart,
                               mapRangeEnd + 1, seedRangeEnd - seedRangeStart] 
+                print("Case 2", bufferList)
                 
-            elif mapRangeStart <= seedRangeStart <= mapRangeEnd and not (mapRangeStart <= seedRangeEnd <= mapRangeEnd):
+                
+            elif mapRangeStart <= seedRangeStart <= mapRangeEnd and seedRangeEnd > mapRangeEnd:
                 #Seed start within but seed end out
                 #Create a range with Start converted -> Maprange end,
                 # maprangend +1 -> normal Seed end 
-                bufferList = [seedRangeStart + mapKey, mapRangeEnd + mapKey - seedRangeStart,
-                              mapRangeEnd + 1, seedRangeEnd - seedRangeStart]
-                
-            elif not(mapRangeStart <= seedRangeStart <= mapRangeEnd) and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
+                bufferList = [seedRangeStart + mapKey, mapRangeEnd - seedRangeStart,
+                              mapRangeEnd + 1, seedRangeEnd - mapRangeEnd]
+                print("Case 3", bufferList)
+
+            elif seedRangeStart < mapRangeStart and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
                 #Seed start out but seed end within
                 #Create a range SeedStartNormal -> mapstart -1,
                 #mapstart Converted -> RangeEndCoverted,
                 bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
-                              mapRangeStart + mapKey, seedRangeEnd + mapKey -seedRangeStart]
-                
+                              mapRangeStart + mapKey, seedRangeEnd - mapRangeStart]
+                print("Case 4", bufferList)
+                 
+
             else:
                 #The ranges do not overlap
                 bufferList = [(seedRangeStart), (seedRangeEnd - seedRangeStart)]
+                print("Case 5", bufferList)
 
         print("Itens addes: ", bufferList)
         for itens in bufferList:
