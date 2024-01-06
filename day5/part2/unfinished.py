@@ -37,79 +37,82 @@ def checkSmallestNumber(seedList):
 
 
 def compareList(seedList, mapList):
-
-    '''
-    TODO: Parsing the numbers correctly, but making a mistake in conversion is some point
-    Follow the conversions to find the erros
-    '''
-    print("Old Seed List : ", seedList)
-    bufferList = []
     newSeedList = []
-    #Naming the variables for the seed
-    for i in range(int(((len(seedList))/2))):
-        seedRangeStart = int(seedList[i *2])
-        seedRangeEnd = int(seedList[i *2]) + int(seedList[(i*2) + 1])
-        print("Seeds : ", seedRangeStart, seedRangeEnd)
+    
+    #print(seedList, mapList)
+    for i in range(int(len(seedList)/2)):
+        seedStart = int(seedList[i*2])
+        seedRange = int(seedList[(i*2)+1])
+        seedEnd = int(seedStart) + int(seedRange)
 
-        for mapLists in mapList:
-            print("Maps :" ,mapLists)
-            #Naming the variables for map
-            mapRangeStart = int(mapLists[1])
-            mapRangeEnd = int(mapLists[1]) + int(mapLists[2])
-            mapKey = int(mapLists[0]) - int(mapLists[1])
+        bufferList = [seedStart, seedRange]
+        
+        #For each map range in mapList, we check and update the list
+        for maps in mapList:
+            mapStart = int(maps[1])
+            mapsEnd = int(maps[1]) + int(maps[2])
+            mapRange = int(maps[2])
+            mapsKey = int(maps[0]) -int(maps[1])
 
-            #Check if the seeds and maps intersect
+            matchFound = False
 
-            if mapRangeStart <= seedRangeStart <= mapRangeEnd and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
-                #Seed fully inside map range
-                #both Start and End of Seed Range converted
-                #We remove the Seed Range start from the end to create a Range, and not a end position
-                bufferList = [seedRangeStart + mapKey, seedRangeEnd - seedRangeStart]
-                print("Case 1", bufferList)
+
+            #Seeds fully contained inside map
+            if mapStart <= seedStart <= mapsEnd and mapStart <= seedEnd <= mapsEnd:
+                #Just Convert the seed start
+                print("Key : ", mapsKey, "Case 1")
+                bufferList = [seedStart + mapsKey, seedRange]
+                print(bufferList)
+                matchFound = True
+                break
+            
+            #Maps fully contained inside key
+            elif seedStart <= mapStart <= seedEnd and seedStart <= mapsEnd <= seedEnd:
+                #create 3 ranges
+                #seedStart -> Mapstart -1
+                #mapstart + key -> map end + key
+                #map end +1 -> seedEnd
+                print("Key : ", mapsKey, "Case 2")
+                bufferList = [seedStart, (mapStart - 1) - seedStart,
+                              mapStart + mapsKey, mapRange,
+                              mapsEnd + 1, seedEnd - mapsEnd + 1]
+                print(bufferList)
+                matchFound = True
+                break
+            
+            #Seed starts out but end within
+            elif seedStart < mapStart and mapStart <= seedEnd <= mapsEnd:
+                #create 2 ranges
+                #Seedstart -> mapstart -1
+                #map start converted -> seed end
+                print("Key : ", mapsKey, "Case 3")
+                bufferList = [seedStart, (mapStart - 1) - seedStart,
+                              mapStart + mapsKey, mapsEnd - seedEnd + 1]
+                print(bufferList)
+                matchFound = True
                 break
                 
-            elif seedRangeStart <= mapRangeStart <= seedRangeEnd and seedRangeStart <= mapRangeEnd <= seedRangeEnd:
-                #Map range fully withing Seeds
-                #Create a list with SeedStart -> MapStart -1, 
-                #another range from MapStart -> MapEnd, 
-                #another from Mapend + 1 -> Seed End
-                bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
-                              mapRangeStart + mapKey, mapRangeEnd + mapKey - mapRangeStart,
-                              mapRangeEnd + 1, seedRangeEnd - seedRangeStart] 
-                print("Case 2", bufferList)
-                
-                
-            elif mapRangeStart <= seedRangeStart <= mapRangeEnd and seedRangeEnd > mapRangeEnd:
-                #Seed start within but seed end out
-                #Create a range with Start converted -> Maprange end,
-                # maprangend +1 -> normal Seed end 
-                bufferList = [seedRangeStart + mapKey, mapRangeEnd - seedRangeStart,
-                              mapRangeEnd + 1, seedRangeEnd - mapRangeEnd]
-                print("Case 3", bufferList)
+            #Seed starts in but ends out    
+            elif mapStart <= seedStart <= mapsEnd and seedEnd > mapsEnd:
+                #create two ranges
+                #Seed start converted -> map end
+                #map end + 1, seed end
+                print("Key : ", mapsKey, "Case 4")
+                bufferList = [seedStart + mapsKey, mapsEnd - seedStart,
+                              mapsEnd + 1, seedEnd - mapsEnd + 1]
+                print(bufferList)
+                matchFound = True
+                break
 
-            elif seedRangeStart < mapRangeStart and mapRangeStart <= seedRangeEnd <= mapRangeEnd:
-                #Seed start out but seed end within
-                #Create a range SeedStartNormal -> mapstart -1,
-                #mapstart Converted -> RangeEndCoverted,
-                bufferList = [seedRangeStart, mapRangeStart - 1 - seedRangeStart,
-                              mapRangeStart + mapKey, seedRangeEnd - mapRangeStart]
-                print("Case 4", bufferList)
-                 
+        for buffers in bufferList:
+            newSeedList.append(buffers)
+        bufferList.clear()
 
-            else:
-                #The ranges do not overlap
-                bufferList = [(seedRangeStart), (seedRangeEnd - seedRangeStart)]
-                print("Case 5", bufferList)
-
-        print("Itens addes: ", bufferList)
-        for itens in bufferList:
-            newSeedList.append(itens)
-
-        bufferList.clear() 
-
-    print("New Seed List : " ,newSeedList)
-    return newSeedList 
-
+        
+            
+        
+    print(newSeedList)
+    return newSeedList
         
 def treatCoordinates(rawCoord):
     lineBuffer =[]
